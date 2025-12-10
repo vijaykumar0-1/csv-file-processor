@@ -1,4 +1,4 @@
-package com.csvFileProcessor;
+package com.csvfileprocessor.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

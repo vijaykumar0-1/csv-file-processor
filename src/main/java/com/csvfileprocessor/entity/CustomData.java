@@ -1,4 +1,4 @@
-package com.csvFileProcessor.Model;
+package com.csvfileprocessor.entity;
 
 import lombok.Data;
 

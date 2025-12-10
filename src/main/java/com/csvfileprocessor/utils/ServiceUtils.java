@@ -1,6 +1,6 @@
-package com.csvFileProcessor.Service;
+package com.csvfileprocessor.utils;
 
-import com.csvFileProcessor.Model.CustomData;
+import com.csvfileprocessor.entity.CustomData;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.experimental.UtilityClass;

@@ -1,4 +1,4 @@
-package com.csvFileProcessor.Scheduler;
+package com.csvfileprocessor.scheduler;
 
 
 import org.springframework.scheduling.annotation.Scheduled;
