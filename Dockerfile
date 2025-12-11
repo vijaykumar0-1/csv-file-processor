@@ -1,27 +1,29 @@
-# Use the official Gradle image with JDK 17 for building
 FROM gradle:7-jdk17 AS builder
-
-# Set the working directory
 WORKDIR /app
 
-# Copy only the necessary files for dependency resolution
-COPY build.gradle settings.gradle /app/
-COPY src /app/src/
+# Copy gradle wrapper and settings first to leverage cache (if you have a wrapper)
+COPY gradle gradle
+COPY gradlew .
+COPY build.gradle settings.gradle ./
 
-# Resolve dependencies and build the application
-RUN gradle build
+# Copy sources
+COPY src ./src
 
-# Create a new image with the JAR file
-FROM openjdk:17-slim
+# Ensure wrapper is executable (if using wrapper)
+RUN chmod +x ./gradlew || true
 
-# Set the working directory in the container
+# Build the Spring Boot executable jar (use wrapper if available)
+# Use bootJar to guarantee an executable Spring Boot jar is produced.
+RUN ./gradlew clean bootJar --no-daemon || gradle clean bootJar --no-daemon
+
+
+# Stage 2 — runtime image
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Copy the JAR file from the builder stage to the current location
-COPY --from=builder /app/build/libs/userAuthentication-0.0.1-SNAPSHOT.jar CSVfileProcessor.jar
+# Copy the produced jar (wildcard is safer than hard-coding the name)
+COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Expose the port that your Spring Boot application runs on
 EXPOSE 8080
 
-# Specify the command to run your application
-ENTRYPOINT ["java", "-jar", "CSVfileProcessor.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
